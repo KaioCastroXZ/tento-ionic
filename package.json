@@ -14,8 +14,10 @@
     "typecheck:e2e": "tsc -p tsconfig.e2e.json",
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "vitest run",
+    "test.unit": "vitest",
     "test:unit:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "screenshots": "SCREENSHOTS=1 playwright test e2e/screenshots.spec.ts --workers=1"
   },
   "dependencies": {
     "@capacitor/android": "^8.6.0",

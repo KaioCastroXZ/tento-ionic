@@ -1,20 +1,16 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
+import { expectScore, startSeries, tab } from './helpers';
 
-import { collectConsoleProblems, expectScore, startSeries, tab } from './helpers';
-
-test('tela inicial, 4 abas e sem warnings no console', async ({ page }) => {
-  const problems = collectConsoleProblems(page);
+test('tela inicial e 4 abas', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'TENTO' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Nova partida' })).toBeVisible();
   for (const name of ['Placar', 'Histórico', 'Regras', 'Ajustes']) {
     await expect(page.locator('ion-tab-button', { hasText: name })).toBeVisible();
   }
-  expect(problems).toEqual([]);
 });
 
 test('fluxo completo: marcar, truco, menu rápido, fim de partida, desfazer e persistência', async ({ page }) => {
-  const problems = collectConsoleProblems(page);
   await startSeries(page, 'Nós', 'Eles', '3');
 
   // + e TRUCO
@@ -67,8 +63,6 @@ test('fluxo completo: marcar, truco, menu rápido, fim de partida, desfazer e pe
   await tab(page, 'Histórico');
   await expect(page.getByText('Lançamentos da partida atual')).toBeVisible();
   await expect(page.getByText('Nenhum lançamento nesta partida ainda.')).toBeVisible();
-
-  expect(problems).toEqual([]);
 });
 
 test('série de partida única termina e oferece Nova partida / Desfazer', async ({ page }) => {
@@ -79,6 +73,9 @@ test('série de partida única termina e oferece Nova partida / Desfazer', async
   await expect(alert).toContainText('Eles venceu!');
   await alert.getByRole('button', { name: 'Nova partida' }).click();
   await expect(page.getByRole('button', { name: /Começar partida/ })).toBeVisible();
+  // Fecha o modal: o guarda do fim do teste confere que o app volta a ficar acessível.
+  await page.getByRole('button', { name: 'Cancelar' }).click();
+  await expect(page.getByRole('region', { name: 'Eles' })).toBeVisible();
 });
 
 test('série até 2 termina com "venceu a série" e Desfazer des-encerra', async ({ page }) => {
@@ -115,7 +112,6 @@ test('Zerar (com confirmação) mantém nomes e formato', async ({ page }) => {
 });
 
 test('Ajustes: tema escuro aplica ion-palette-dark e Resetar dados volta ao início', async ({ page }) => {
-  const problems = collectConsoleProblems(page);
   await startSeries(page, 'Nós', 'Eles');
   await tab(page, 'Ajustes');
   await page.locator('ion-segment-button', { hasText: 'Escuro' }).click();
@@ -131,5 +127,44 @@ test('Ajustes: tema escuro aplica ion-palette-dark e Resetar dados volta ao iní
   await tab(page, 'Regras');
   await page.locator('ion-segment-button', { hasText: 'Mineiro' }).click();
   await expect(page.getByText('Zap — 4 de paus')).toBeVisible();
-  expect(problems).toEqual([]);
+});
+
+test('menu rápido acima de 12: Aplicar (12) limita o placar, fecha a partida e não prende o app', async ({ page }) => {
+  await startSeries(page, 'Nós', 'Eles', '3');
+  const open = () => page.getByRole('button', { name: /^Nós tem \d+ de 12 tentos/ }).click();
+  await open();
+  await page.getByRole('button', { name: /Adicionar 9 tentos/ }).click();
+  await expectScore(page, 'Nós', 9);
+  await page.getByRole('button', { name: 'Adicionar um tento para Nós' }).click();
+  await expectScore(page, 'Nós', 10);
+
+  await open();
+  await page.getByRole('button', { name: /Adicionar 3 tentos/ }).click();
+  await expect(page.getByText('ultrapassaria 12')).toBeVisible();
+  await page.getByRole('button', { name: 'Aplicar (12)' }).click();
+
+  const gameOver = page.locator('ion-alert.tento-alert:not(.overlay-hidden)');
+  await expect(gameOver).toContainText('Nós venceu 12 x 0.');
+  await gameOver.getByRole('button', { name: 'Próxima partida' }).click();
+  await expectScore(page, 'Nós', 0);
+  await expect(page.getByText(/Série 1 x 0 · partida 2/)).toBeVisible();
+});
+
+test('partida reaberta pelo Desfazer: + e TRUCO desabilitados e − só na dupla com 12', async ({ page }) => {
+  await startSeries(page, 'Nós', 'Eles', '3');
+  await page.getByRole('button', { name: /^Nós tem 0 de 12 tentos/ }).click();
+  await page.getByRole('button', { name: /Adicionar 12 tentos/ }).click();
+  await page
+    .locator('ion-alert.tento-alert:not(.overlay-hidden)')
+    .getByRole('button', { name: 'Próxima partida' })
+    .click();
+  await page.getByRole('button', { name: 'Desfazer: reabrir a última partida encerrada' }).click();
+  await expectScore(page, 'Nós', 12);
+
+  await expect(page.getByRole('button', { name: 'Adicionar um tento para Nós' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Truco: adicionar três tentos para Eles' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Remover um tento de Nós' })).toBeEnabled();
+  await page.getByRole('button', { name: 'Remover um tento de Nós' }).click();
+  await expectScore(page, 'Nós', 11);
+  await expect(page.getByRole('button', { name: 'Adicionar um tento para Nós' })).toBeEnabled();
 });

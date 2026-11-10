@@ -74,7 +74,8 @@ const Ajustes: React.FC = () => {
           <p className="body-text">Tento — Placar de Truco</p>
           <p className="body-text">Versão 1.0</p>
           <p className="muted">
-            Um contador de tentos para partidas presenciais de Truco. Funciona offline, sem cadastro e sem anúncios.
+            Um contador de tentos para partidas presenciais de Truco Paulista. Funciona offline, sem cadastro e sem
+            anúncios.
           </p>
         </div>
 

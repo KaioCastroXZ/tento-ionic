@@ -22,13 +22,14 @@ interface Props {
   initialTeam1: string;
   initialTeam2: string;
   initialGamesToWin: number;
+  /** Pedido de fechar (botão Cancelar). */
   onCancel: () => void;
+  /** O modal terminou de fechar (qualquer motivo): só aqui é seguro abrir outro overlay. */
+  onDidDismiss: () => void;
   onStart: (team1: string, team2: string, gamesToWin: number) => void;
 }
 
-interface FormProps extends Omit<Props, 'isOpen'> {
-  onCancel: () => void;
-}
+type FormProps = Omit<Props, 'isOpen' | 'onDidDismiss'>;
 
 /** O formulário só existe enquanto o modal está aberto, então ele sempre abre com os valores atuais. */
 const Form: React.FC<FormProps> = ({ initialTeam1, initialTeam2, initialGamesToWin, onCancel, onStart }) => {
@@ -115,8 +116,8 @@ const Form: React.FC<FormProps> = ({ initialTeam1, initialTeam2, initialGamesToW
   );
 };
 
-const NewSeriesModal: React.FC<Props> = ({ isOpen, ...rest }) => (
-  <IonModal isOpen={isOpen} onDidDismiss={rest.onCancel}>
+const NewSeriesModal: React.FC<Props> = ({ isOpen, onDidDismiss, ...rest }) => (
+  <IonModal isOpen={isOpen} onDidDismiss={onDidDismiss}>
     {isOpen && <Form {...rest} />}
   </IonModal>
 );

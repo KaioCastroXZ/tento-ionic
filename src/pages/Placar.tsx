@@ -21,6 +21,7 @@ import { escapeHtml } from '../components/escapeHtml';
 import { MAX_NAME_LENGTH } from '../engine';
 import { useFeedback } from '../hooks/useFeedback';
 import { useScore } from '../hooks/useScore';
+import { isFinished, winner } from '../model/scoreState';
 import {
   boardScoreOf,
   currentGameNumber,
@@ -75,7 +76,15 @@ const Placar: React.FC = () => {
   const finishedSeries = isSeriesFinished(series);
   const last = lastGame(series);
   const showGameOver = awaiting && last !== null && gameOverHiddenFor !== last.timestamp;
-  const locked = awaiting || finishedSeries;
+  // Partida reaberta pelo Desfazer (12 × N sem registro): não aceita tentos; só permite corrigir com −
+  // na dupla que está com 12 (tirar da outra manteria a partida "fechada" e o engine a registraria de novo).
+  const reopened = isFinished(series.currentGame) && !awaiting && !finishedSeries;
+  const canAdd = !isFinished(series.currentGame) && !finishedSeries;
+  const canRemoveFor = (team: Team): boolean =>
+    !awaiting &&
+    !finishedSeries &&
+    boardScoreOf(series, team) > 0 &&
+    (!reopened || winner(series.currentGame) === team);
   const single = isSingleGame(series);
 
   const gameOver = (() => {
@@ -195,10 +204,10 @@ const Placar: React.FC = () => {
                   gamesWon={gamesOf(series, team)}
                   gamesToWin={series.gamesToWin}
                   isSeriesWinner={finishedSeries && seriesWinner(series) === team}
-                  canAdd={!locked}
+                  canAdd={canAdd}
                   // Corrigir com − só quando a partida não está fechada: com 12 à vista o engine
                   // (idêntico ao Kotlin) deixaria o resultado registrado e contaria a partida em dobro.
-                  canRemove={!locked && boardScoreOf(series, team) > 0}
+                  canRemove={canRemoveFor(team)}
                   onQuickAdd={() => setQuickAddTeam(team)}
                   onIncrement={() => add(team, 1)}
                   onTruco={() => add(team, 3)}
@@ -222,22 +231,24 @@ const Placar: React.FC = () => {
         initialTeam1={series.currentGame.team1Name}
         initialTeam2={series.currentGame.team2Name}
         initialGamesToWin={series.gamesToWin}
-        onCancel={() => {
+        onCancel={() => setNewSeriesOpen(false)}
+        // Só depois de o modal fechar de vez o alerta de fim de partida pode reaparecer (se o usuário cancelou).
+        onDidDismiss={() => {
           setNewSeriesOpen(false);
           setGameOverHiddenFor(null);
         }}
         onStart={(n1, n2, g) => {
           ctx.newSeries(n1, n2, g);
           setNewSeriesOpen(false);
-          setGameOverHiddenFor(null);
         }}
       />
 
       <AddPointsSheet
-        teamName={quickTeamName}
+        team={quickAddTeam}
+        teamName={quickTeamName ?? ''}
         currentScore={quickAddTeam === null ? 0 : boardScoreOf(series, quickAddTeam)}
         onClose={() => setQuickAddTeam(null)}
-        onConfirmValue={(v) => quickAddTeam !== null && add(quickAddTeam, v)}
+        onConfirmValue={add}
       />
 
       <IonActionSheet

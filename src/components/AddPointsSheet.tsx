@@ -1,16 +1,17 @@
 import { IonActionSheet, IonAlert } from '@ionic/react';
 import { useRef, useState } from 'react';
 
-import { HAND_VALUES, WINNING_SCORE } from '../model/truco';
+import { HAND_VALUES, WINNING_SCORE, type Team } from '../model/truco';
 
 import { escapeHtml } from './escapeHtml';
 
 interface Props {
   /** Dupla escolhida (null = fechado). */
-  teamName: string | null;
+  team: Team | null;
+  teamName: string;
   currentScore: number;
   onClose: () => void;
-  onConfirmValue: (value: number) => void;
+  onConfirmValue: (team: Team, value: number) => void;
 }
 
 const plural = (v: number) => (v === 1 ? 'Adicionar um tento' : `Adicionar ${v} tentos`);
@@ -19,16 +20,19 @@ const plural = (v: number) => (v === 1 ? 'Adicionar um tento' : `Adicionar ${v} 
  * Menu rápido +1 +3 +6 +9 +12. Se o valor passaria de 12, pede confirmação
  * (o placar é limitado a 12). A confirmação só abre DEPOIS que o menu terminou de fechar.
  */
-const AddPointsSheet: React.FC<Props> = ({ teamName, currentScore, onClose, onConfirmValue }) => {
+const AddPointsSheet: React.FC<Props> = ({ team, teamName, currentScore, onClose, onConfirmValue }) => {
   const chosen = useRef<number | null>(null);
-  const [overflow, setOverflow] = useState<{ name: string; score: number; value: number } | null>(null);
+  const [overflow, setOverflow] = useState<{ team: Team; name: string; score: number; value: number } | null>(null);
+  // Valor confirmado no alerta de "passa de 12": só é aplicado quando o alerta terminou de fechar,
+  // senão o próximo overlay (fim de partida) abriria por cima dele e deixaria `aria-hidden` preso.
+  const confirmed = useRef<{ team: Team; value: number } | null>(null);
 
   const handleSheetDismiss = () => {
     const value = chosen.current;
     chosen.current = null;
-    if (value !== null && teamName !== null) {
-      if (currentScore + value > WINNING_SCORE) setOverflow({ name: teamName, score: currentScore, value });
-      else onConfirmValue(value);
+    if (value !== null && team !== null) {
+      if (currentScore + value > WINNING_SCORE) setOverflow({ team, name: teamName, score: currentScore, value });
+      else onConfirmValue(team, value);
     }
     onClose();
   };
@@ -36,13 +40,13 @@ const AddPointsSheet: React.FC<Props> = ({ teamName, currentScore, onClose, onCo
   return (
     <>
       <IonActionSheet
-        isOpen={teamName !== null}
+        isOpen={team !== null}
         header="Adicionar tentos"
-        subHeader={`${teamName ?? ''} • ${currentScore} / ${WINNING_SCORE}`}
+        subHeader={`${teamName} • ${currentScore} / ${WINNING_SCORE}`}
         buttons={[
           ...HAND_VALUES.map((v) => ({
             text: `+${v}`,
-            htmlAttributes: { 'aria-label': `${plural(v)} para ${teamName ?? ''}` },
+            htmlAttributes: { 'aria-label': `${plural(v)} para ${teamName}` },
             handler: () => {
               chosen.current = v;
             },
@@ -65,11 +69,16 @@ const AddPointsSheet: React.FC<Props> = ({ teamName, currentScore, onClose, onCo
             text: `Aplicar (${WINNING_SCORE})`,
             role: 'confirm',
             handler: () => {
-              if (overflow) onConfirmValue(overflow.value);
+              if (overflow) confirmed.current = { team: overflow.team, value: overflow.value };
             },
           },
         ]}
-        onDidDismiss={() => setOverflow(null)}
+        onDidDismiss={() => {
+          const c = confirmed.current;
+          confirmed.current = null;
+          setOverflow(null);
+          if (c) onConfirmValue(c.team, c.value);
+        }}
       />
     </>
   );

@@ -116,8 +116,9 @@ Pré-requisitos: Node.js + npm.
 ```bash
 npm install
 ionic serve                  # navegador (ou: npm run dev)
-npm run test:unit            # testes de unidade (Vitest)
+npm run test:unit            # testes de unidade (Vitest) — também vale: npm run test.unit -- --run
 npm run test:e2e             # testes de fluxo (Playwright; 1ª vez: npx playwright install chromium)
+npm run screenshots          # regenera os prints de docs/screenshots (não roda no test:e2e)
 npm run lint                 # eslint + prettier + tipos
 ```
 
@@ -148,14 +149,24 @@ npx cap open android         # abre no Android Studio
 | `preferencesRepository.test.ts` (9) | round-trip, JSON corrompido, forma errada, valores inválidos, falha de leitura, `clearAll` |
 | `App.test.tsx` (1) | abre na aba Placar com as 4 abas |
 
-`npm run test:e2e` — **7 testes de fluxo** num Chrome mobile (Pixel 7): tela inicial sem
-warnings no console; marcar/truco/remover, persistência ao recarregar, menu rápido com
-confirmação acima de 12, fim de partida, desfazer e reabrir; partida única; série até 2;
-edição de nome; Zerar; tema escuro e Resetar dados. `e2e/screenshots.spec.ts` regenera os prints
-em `docs/screenshots/`.
+`npm run test:e2e` — **9 testes de fluxo** num Chrome mobile (Pixel 7): tela inicial e abas;
+marcar/truco/remover, persistência ao recarregar, menu rápido com confirmação acima de 12 (cancelar
+e aplicar), fim de partida, desfazer e reabrir; partida única; série até 2; partida reaberta
+(+/TRUCO desabilitados); edição de nome; Zerar; tema escuro, Regras e Resetar dados.
+
+Todo teste de fluxo tem um **guarda automático** (`e2e/fixtures.ts`): ao final, o console não pode ter
+warnings nem erros e o app não pode ficar com `aria-hidden` preso (bug clássico ao encadear overlays do
+Ionic, que esconde a tela de leitores de tela). Esse guarda já pegou dois bugs reais durante o
+desenvolvimento.
 
 ## Diferenças em relação ao app Android
 
+- **Sem o "+N" flutuante** que aparecia sobre o número e **sem o fio divisor central** entre os dois
+  painéis do Compose; o "pulso" de escala do número foi mantido.
+- **Textos de "Como jogar"** ajustados ao app: sem a menção ao toque longo no `+` e com "Desfazer" no
+  placar ou no histórico.
+- **Partida reaberta pelo Desfazer** (12 × N sem registro): `+`/`TRUCO`/menu rápido ficam desabilitados
+  (o engine ignora tentos nesse estado) e o `−` só vale na dupla que está com 12.
 - **Desfazer no fim de série** (e de partida única): o alerta oferece `Desfazer` no lugar do
   `Ver placar`/`Continuar` do original — assim o placar nunca fica "congelado".
 - **`−` desabilitado** com a partida fechada em 12 à vista. O engine é idêntico ao Kotlin, e lá
