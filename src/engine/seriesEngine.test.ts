@@ -18,6 +18,7 @@ import {
   type SeriesState,
 } from '../model/seriesState';
 import { TEAM_ONE, TEAM_TWO, type Team } from '../model/truco';
+
 import * as engine from './seriesEngine';
 
 let clock = 0;

@@ -58,5 +58,5 @@
     "vitest": "^5.1.0"
   },
   "prettier": "@ionic/prettier-config",
-  "description": "An Ionic project"
+  "description": "Tento — Placar de Truco em Ionic + React"
 }

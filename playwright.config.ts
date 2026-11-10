@@ -11,6 +11,8 @@ export default defineConfig({
   use: {
     baseURL,
     trace: 'on-first-retry',
+    // SLOWMO=600 npx playwright test --headed → dá para acompanhar os cliques na tela.
+    launchOptions: { slowMo: Number(process.env.SLOWMO ?? 0) },
   },
   projects: [
     {

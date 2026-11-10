@@ -26,13 +26,10 @@ export const createSeriesState = (overrides: Partial<SeriesState> = {}): SeriesS
 export const team1Name = (s: SeriesState): string => s.currentGame.team1Name;
 export const team2Name = (s: SeriesState): string => s.currentGame.team2Name;
 
-export const team1Games = (s: SeriesState): number =>
-  s.completedGames.filter((g) => g.winner === TEAM_ONE).length;
-export const team2Games = (s: SeriesState): number =>
-  s.completedGames.filter((g) => g.winner === TEAM_TWO).length;
+export const team1Games = (s: SeriesState): number => s.completedGames.filter((g) => g.winner === TEAM_ONE).length;
+export const team2Games = (s: SeriesState): number => s.completedGames.filter((g) => g.winner === TEAM_TWO).length;
 
-export const gamesOf = (s: SeriesState, team: Team): number =>
-  team === TEAM_ONE ? team1Games(s) : team2Games(s);
+export const gamesOf = (s: SeriesState, team: Team): number => (team === TEAM_ONE ? team1Games(s) : team2Games(s));
 
 /** Dupla que venceu a série (1 ou 2), ou `null` se ainda está em disputa. */
 export const seriesWinner = (s: SeriesState): Team | null => {
@@ -79,3 +76,6 @@ export const isAwaitingAdvance = (s: SeriesState): boolean => {
     last.team2Score === s.currentGame.team2Score
   );
 };
+
+/** Há algo para desfazer (lançamento da partida atual ou partida encerrada para reabrir). */
+export const canUndo = (s: SeriesState): boolean => s.currentGame.history.length > 0 || s.completedGames.length > 0;

@@ -16,10 +16,10 @@ import {
   type SeriesState,
 } from '../model/seriesState';
 import { TEAM_ONE, type Team } from '../model/truco';
+
 import * as score from './scoreEngine';
 
-const safeGamesToWin = (value: unknown): number =>
-  score.coerceInt(value, 1, MAX_GAMES_TO_WIN, DEFAULT_GAMES_TO_WIN);
+const safeGamesToWin = (value: unknown): number => score.coerceInt(value, 1, MAX_GAMES_TO_WIN, DEFAULT_GAMES_TO_WIN);
 
 /** Higieniza uma série vinda da persistência (`gamesToWin` entre 1 e 3, partida atual válida). */
 export const loadSeries = (state: SeriesState): SeriesState => ({
@@ -42,12 +42,7 @@ const afterGameChange = (state: SeriesState, game: SeriesState['currentGame'], n
 };
 
 /** Ignorado quando a série acabou ou a partida atual já fechou (aguardando "Próxima partida"). */
-export const addPoints = (
-  state: SeriesState,
-  team: Team,
-  points: number,
-  now: number = Date.now(),
-): SeriesState => {
+export const addPoints = (state: SeriesState, team: Team, points: number, now: number = Date.now()): SeriesState => {
   if (isSeriesFinished(state) || isFinished(state.currentGame)) return state;
   return afterGameChange(state, score.addPoints(state.currentGame, team, points, now), now);
 };

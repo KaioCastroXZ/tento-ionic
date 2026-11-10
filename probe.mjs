@@ -1,0 +1,16 @@
+import { chromium, devices } from '@playwright/test';
+const b = await chromium.launch();
+const page = await (await b.newContext({ ...devices['Pixel 7'] })).newPage();
+page.on('console', m => ['warning','error'].includes(m.type()) && console.log('CONSOLE', m.type(), m.text()));
+page.on('pageerror', e => console.log('PAGEERROR', e.message));
+await page.goto('http://localhost:5173/');
+await page.getByRole('button', { name: 'Nova partida' }).click();
+await page.getByRole('button', { name: /Começar/ }).click();
+await page.getByRole('button', { name: 'Adicionar um tento para Nossa Dupla' }).click();
+await page.getByRole('button', { name: 'Mais opções' }).click();
+await page.getByRole('button', { name: 'Zerar série' }).click();
+await page.getByRole('button', { name: 'Zerar', exact: true }).click();
+await page.waitForTimeout(1500);
+console.log(await page.locator('section.team-panel').first().evaluate(e => e.outerHTML.replace(/<svg[\s\S]*?<\/svg>/g,'<svg/>').slice(0, 1500)));
+console.log('aria-hidden ancestors of section:', await page.locator('section.team-panel').first().evaluate(e => { const r=[]; for (let n=e; n; n=n.parentElement) if (n.getAttribute && n.getAttribute('aria-hidden')) r.push(n.tagName+':'+n.getAttribute('aria-hidden')); return r; }));
+await b.close();

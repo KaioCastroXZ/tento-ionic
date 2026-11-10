@@ -1,9 +1,9 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'tento-ionic',
-  webDir: 'dist'
+  appId: 'io.github.kaiocastroxz.tento.ionic',
+  appName: 'Tento',
+  webDir: 'dist',
 };
 
 export default config;

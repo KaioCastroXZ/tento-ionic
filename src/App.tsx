@@ -9,12 +9,14 @@ import {
   setupIonicReact,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { ellipse, square, triangle } from 'ionicons/icons';
+import { bookOutline, settingsOutline, timeOutline, trophyOutline } from 'ionicons/icons';
 import { Navigate, Route } from 'react-router-dom';
 
-import Tab1 from './pages/Tab1';
-import Tab2 from './pages/Tab2';
-import Tab3 from './pages/Tab3';
+import { ScoreProvider } from './hooks/ScoreProvider';
+import Ajustes from './pages/Ajustes';
+import Historico from './pages/Historico';
+import Placar from './pages/Placar';
+import Regras from './pages/Regras';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -32,48 +34,48 @@ import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
-
-/* import '@ionic/react/css/palettes/dark.always.css'; */
-/* import '@ionic/react/css/palettes/dark.class.css'; */
-import '@ionic/react/css/palettes/dark.system.css';
+/* Modo escuro por classe: a aba Ajustes liga/desliga `ion-palette-dark` no <html>. */
+import '@ionic/react/css/palettes/dark.class.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import './theme/tento.css';
 
 setupIonicReact();
 
 const App: React.FC = () => (
   <IonApp>
-    <IonReactRouter>
-      <IonTabs>
-        <IonRouterOutlet>
-          <Route path="/tab1" element={<Tab1 />} />
-          <Route path="/tab2" element={<Tab2 />} />
-          <Route path="/tab3" element={<Tab3 />} />
-          <Route path="/" element={<Navigate to="/tab1" replace />} />
-        </IonRouterOutlet>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="tab1" href="/tab1">
-            <IonIcon aria-hidden="true" icon={triangle} />
-            <IonLabel>Tab 1</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="tab2" href="/tab2">
-            <IonIcon aria-hidden="true" icon={ellipse} />
-            <IonLabel>Tab 2</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="tab3" href="/tab3">
-            <IonIcon aria-hidden="true" icon={square} />
-            <IonLabel>Tab 3</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
-      </IonTabs>
-    </IonReactRouter>
+    <ScoreProvider>
+      <IonReactRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <IonTabs>
+          <IonRouterOutlet>
+            <Route path="/placar" element={<Placar />} />
+            <Route path="/historico" element={<Historico />} />
+            <Route path="/regras" element={<Regras />} />
+            <Route path="/ajustes" element={<Ajustes />} />
+            <Route path="/" element={<Navigate to="/placar" replace />} />
+          </IonRouterOutlet>
+          <IonTabBar slot="bottom">
+            <IonTabButton tab="placar" href="/placar">
+              <IonIcon aria-hidden="true" icon={trophyOutline} />
+              <IonLabel>Placar</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="historico" href="/historico">
+              <IonIcon aria-hidden="true" icon={timeOutline} />
+              <IonLabel>Histórico</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="regras" href="/regras">
+              <IonIcon aria-hidden="true" icon={bookOutline} />
+              <IonLabel>Regras</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="ajustes" href="/ajustes">
+              <IonIcon aria-hidden="true" icon={settingsOutline} />
+              <IonLabel>Ajustes</IonLabel>
+            </IonTabButton>
+          </IonTabBar>
+        </IonTabs>
+      </IonReactRouter>
+    </ScoreProvider>
   </IonApp>
 );
 

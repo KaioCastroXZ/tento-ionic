@@ -5,13 +5,7 @@
  * O estado é imutável: cada operação recebe um `ScoreState` e devolve um NOVO.
  */
 import type { ScoreEvent } from '../model/scoreEvent';
-import {
-  createScoreState,
-  DEFAULT_TEAM_1,
-  DEFAULT_TEAM_2,
-  scoreOf,
-  type ScoreState,
-} from '../model/scoreState';
+import { createScoreState, DEFAULT_TEAM_1, DEFAULT_TEAM_2, scoreOf, type ScoreState } from '../model/scoreState';
 import { isValidTeam, TEAM_ONE, TEAM_TWO, WINNING_SCORE, type Team } from '../model/truco';
 
 export const MAX_NAME_LENGTH = 24;
@@ -39,9 +33,9 @@ export const sanitizeScore = (state: ScoreState): ScoreState => ({
   history: Array.isArray(state.history) ? state.history : [],
 });
 
-const requireTeam = (team: unknown): asserts team is Team => {
+function requireTeam(team: unknown): asserts team is Team {
   if (!isValidTeam(team)) throw new Error(`Time inválido: ${String(team)}`);
-};
+}
 
 const withScore = (state: ScoreState, team: Team, score: number): Pick<ScoreState, 'team1Score' | 'team2Score'> => ({
   team1Score: team === TEAM_ONE ? score : state.team1Score,
@@ -52,12 +46,7 @@ const withScore = (state: ScoreState, team: Team, score: number): Pick<ScoreStat
  * Adiciona (ou remove, se negativo) tentos, respeitando os limites 0 e 12.
  * Registra no histórico apenas a variação aplicada de fato.
  */
-export const addPoints = (
-  state: ScoreState,
-  team: Team,
-  points: number,
-  now: number = Date.now(),
-): ScoreState => {
+export const addPoints = (state: ScoreState, team: Team, points: number, now: number = Date.now()): ScoreState => {
   requireTeam(team);
   if (points === 0) return state;
 

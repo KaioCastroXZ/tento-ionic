@@ -5,6 +5,8 @@ import { defineConfig } from 'vitest/config';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), legacy()],
+  // O Ionic sozinho já passa de 500 kB; o app é 100% offline, então o tamanho do bundle não afeta a rede.
+  build: { chunkSizeWarningLimit: 1600 },
   test: {
     environment: 'jsdom',
     setupFiles: './src/setupTests.ts',

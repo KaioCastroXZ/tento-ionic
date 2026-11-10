@@ -1,6 +1,6 @@
 {
-  "short_name": "Ionic App",
-  "name": "My Ionic App",
+  "short_name": "Tento",
+  "name": "Tento — Placar de Truco",
   "icons": [
     {
       "src": "assets/icon/favicon.png",
@@ -16,6 +16,6 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff"
+  "theme_color": "#07271d",
+  "background_color": "#07271d"
 }

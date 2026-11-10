@@ -9,5 +9,4 @@ export interface GameResult {
   readonly timestamp: number;
 }
 
-export const gameScoreOf = (g: GameResult, team: Team): number =>
-  team === TEAM_ONE ? g.team1Score : g.team2Score;
+export const gameScoreOf = (g: GameResult, team: Team): number => (team === TEAM_ONE ? g.team1Score : g.team2Score);

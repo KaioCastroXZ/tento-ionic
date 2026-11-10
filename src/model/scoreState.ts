@@ -35,11 +35,8 @@ export const winner = (s: ScoreState): Team | null => {
 export const isFinished = (s: ScoreState): boolean => winner(s) !== null;
 
 /** `true` quando a partida já teve alguma pontuação registrada. */
-export const hasProgress = (s: ScoreState): boolean =>
-  s.team1Score > 0 || s.team2Score > 0 || s.history.length > 0;
+export const hasProgress = (s: ScoreState): boolean => s.team1Score > 0 || s.team2Score > 0 || s.history.length > 0;
 
-export const scoreOf = (s: ScoreState, team: Team): number =>
-  team === TEAM_ONE ? s.team1Score : s.team2Score;
+export const scoreOf = (s: ScoreState, team: Team): number => (team === TEAM_ONE ? s.team1Score : s.team2Score);
 
-export const nameOf = (s: ScoreState, team: Team): string =>
-  team === TEAM_ONE ? s.team1Name : s.team2Name;
+export const nameOf = (s: ScoreState, team: Team): string => (team === TEAM_ONE ? s.team1Name : s.team2Name);

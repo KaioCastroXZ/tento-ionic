@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import { createScoreState, DEFAULT_TEAM_1, isFinished, winner, type ScoreState } from '../model/scoreState';
 import { TEAM_ONE, TEAM_TWO, WINNING_SCORE } from '../model/truco';
+
 import * as engine from './scoreEngine';
 
 let clock = 0;

@@ -1,2 +1,123 @@
-/* For information on how to create your own theme, please refer to:
-http://ionicframework.com/docs/theming/ */
+/*
+ * Tento — "mesa de carteado elegante, porém moderna": verde feltro, vermelho, dourado e marfim.
+ * Paleta mapeada nas variáveis do Ionic, para tema claro (:root) e escuro (.ion-palette-dark).
+ *
+ * Tokens: FeltGreenDeep #07271D · FeltGreenDark #0B3B2E · FeltGreen #12503D · FeltGreenLight #1C6A50
+ *         FeltGreenPaleBg #D8E8DE · Ivory #F7F3E8 · Gold #D4AF37 · GoldInkLight #7A5F16
+ *         TrucoRed #C0392B · TrucoRedBright #E74C3C · OffWhite #F5F1E6 · InkGreen #0A2A1F
+ */
+:root {
+  /* Dourado = primary (marca, dupla 1) */
+  --ion-color-primary: #d4af37;
+  --ion-color-primary-rgb: 212, 175, 55;
+  --ion-color-primary-contrast: #0a2a1f;
+  --ion-color-primary-contrast-rgb: 10, 42, 31;
+  --ion-color-primary-shade: #bb9a30;
+  --ion-color-primary-tint: #d9b94a;
+
+  /* Vermelho = secondary (dupla 2) */
+  --ion-color-secondary: #c0392b;
+  --ion-color-secondary-rgb: 192, 57, 43;
+  --ion-color-secondary-contrast: #f5f1e6;
+  --ion-color-secondary-contrast-rgb: 245, 241, 230;
+  --ion-color-secondary-shade: #a93226;
+  --ion-color-secondary-tint: #c64d40;
+
+  /* Destrutivo (Zerar / Resetar) — separado do vermelho da dupla */
+  --ion-color-danger: #8a3226;
+  --ion-color-danger-rgb: 138, 50, 38;
+  --ion-color-danger-contrast: #f5f1e6;
+  --ion-color-danger-contrast-rgb: 245, 241, 230;
+  --ion-color-danger-shade: #792c21;
+  --ion-color-danger-tint: #96473c;
+
+  --ion-background-color: #d8e8de;
+  --ion-background-color-rgb: 216, 232, 222;
+  --ion-text-color: #0a2a1f;
+  --ion-text-color-rgb: 10, 42, 31;
+  --ion-color-step-50: #cddfd4;
+  --ion-color-step-100: #c3d6ca;
+  --ion-color-step-150: #b8cdc0;
+  --ion-color-step-200: #aec3b6;
+  --ion-color-step-300: #99ac9f;
+  --ion-color-step-400: #839a8c;
+  --ion-color-step-500: #6d8576;
+  --ion-color-step-600: #577060;
+  --ion-color-step-700: #415b4b;
+  --ion-color-step-800: #2c4636;
+  --ion-color-step-900: #1a3427;
+  --ion-color-step-950: #0f2e22;
+
+  --ion-toolbar-background: #d8e8de;
+  --ion-toolbar-color: #0a2a1f;
+  --ion-tab-bar-background: #f7f3e8;
+  --ion-tab-bar-color: #4a6556;
+  --ion-tab-bar-color-selected: #7a5f16;
+  --ion-item-background: #f7f3e8;
+
+  /* Tokens do Tento */
+  --tento-card: #f7f3e8;
+  --tento-border: #b5cfc1;
+  --tento-track: #cfe3d8;
+  --tento-gold-text: #7a5f16;
+  --tento-muted: #3d5a4b;
+  --tento-destructive: #8a3226;
+}
+
+:root.ion-palette-dark {
+  --ion-color-primary: #d4af37;
+  --ion-color-primary-rgb: 212, 175, 55;
+  --ion-color-primary-contrast: #0a2a1f;
+  --ion-color-primary-contrast-rgb: 10, 42, 31;
+  --ion-color-primary-shade: #bb9a30;
+  --ion-color-primary-tint: #d9b94a;
+
+  --ion-color-secondary: #e74c3c;
+  --ion-color-secondary-rgb: 231, 76, 60;
+  --ion-color-secondary-contrast: #f5f1e6;
+  --ion-color-secondary-contrast-rgb: 245, 241, 230;
+  --ion-color-secondary-shade: #cb4335;
+  --ion-color-secondary-tint: #e95e50;
+
+  --ion-color-danger: #b33b2c;
+  --ion-color-danger-rgb: 179, 59, 44;
+  --ion-color-danger-contrast: #f5f1e6;
+  --ion-color-danger-contrast-rgb: 245, 241, 230;
+  --ion-color-danger-shade: #9e3427;
+  --ion-color-danger-tint: #bb4e3f;
+
+  --ion-background-color: #07271d;
+  --ion-background-color-rgb: 7, 39, 29;
+  --ion-text-color: #f5f1e6;
+  --ion-text-color-rgb: 245, 241, 230;
+  --ion-color-step-50: #12362a;
+  --ion-color-step-100: #1b3f33;
+  --ion-color-step-150: #25493d;
+  --ion-color-step-200: #2f5347;
+  --ion-color-step-300: #44675b;
+  --ion-color-step-400: #5a7b6f;
+  --ion-color-step-500: #718f83;
+  --ion-color-step-600: #8aa398;
+  --ion-color-step-700: #a3b8af;
+  --ion-color-step-800: #bccdc5;
+  --ion-color-step-900: #d6e2dc;
+  --ion-color-step-950: #eaf0ed;
+
+  --ion-toolbar-background: #07271d;
+  --ion-toolbar-color: #f5f1e6;
+  --ion-tab-bar-background: #0b3b2e;
+  --ion-tab-bar-color: #9fb8ac;
+  --ion-tab-bar-color-selected: #d4af37;
+  --ion-item-background: #0b3b2e;
+
+  --tento-card: #0b3b2e;
+  --tento-border: #1c6a50;
+  --tento-track: #12503d;
+  --tento-gold-text: #d4af37;
+  --tento-muted: #a9c2b5;
+  --tento-destructive: #b33b2c;
+}
+
+ion-tab-bar {
+  --border: 1px solid var(--tento-border);
+}
