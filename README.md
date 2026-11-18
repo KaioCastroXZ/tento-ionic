@@ -129,14 +129,48 @@ SLOWMO=500 npx playwright test e2e/app.spec.ts --headed --workers=1   # câmera 
 npx playwright test --ui                                                # modo interativo
 ```
 
-### Android (opcional)
+### Android
+
+O projeto Android (Capacitor) já está versionado em `android/`, com `appId`
+`io.github.kaiocastroxz.tento.ionic` e os ícones gerados a partir de `assets/icon-only.png`.
+
+**Pré-requisitos:** Node 22+, JDK 21 e Android SDK (via Android Studio, ou só as command-line tools
+com `ANDROID_HOME` definido). O projeto usa `minSdk 24` e `compileSdk 36`.
+
+Sempre que mudar o código web, regenere o `dist/` e sincronize com o projeto nativo:
 
 ```bash
-ionic build
-npx cap add android
-npx cap sync android
-npx cap open android         # abre no Android Studio
+npm run build                # tsc + vite build -> dist/
+npx cap sync android         # copia o dist/ e atualiza os plugins
 ```
+
+**Rodar no celular/emulador**
+
+```bash
+npx cap run android          # compila, instala e abre no dispositivo/emulador conectado
+npx cap open android         # ou abre no Android Studio (Run ▶)
+```
+
+**Gerar o APK**
+
+```bash
+npm run build && npx cap sync android
+cd android
+./gradlew assembleDebug      # Windows: gradlew.bat assembleDebug
+```
+
+O APK de debug sai em `android/app/build/outputs/apk/debug/app-debug.apk` e pode ser instalado direto
+no celular (`adb install -r app/build/outputs/apk/debug/app-debug.apk`, ou copiando o arquivo e
+permitindo "fontes desconhecidas").
+
+Pelo Android Studio: **Build > Build Bundle(s) / APK(s) > Build APK(s)**.
+
+**APK de release (assinado):** gere uma keystore e use **Build > Generate Signed Bundle / APK**, ou
+`./gradlew assembleRelease` com a assinatura configurada em `android/app/build.gradle`.
+Nunca versione a keystore nem as senhas.
+
+**Trocar o ícone:** substitua `assets/icon-only.png` (1024×1024) e rode
+`npx capacitor-assets generate --android`. Os ícones da versão web ficam em `public/assets/icon/`.
 
 ## Testes
 
@@ -181,7 +215,7 @@ desenvolvimento.
 
 - Em tela larga o placar só centraliza (largura máxima de 720 px); não há layout dedicado de 3 colunas.
 - Os sons são um clique sintetizado (WebAudio), sem trilha própria.
-- O projeto Android (`npx cap add android`) não vem versionado: é gerado com os comandos acima.
+- O APK não é versionado: gere-o com os passos da seção Android (`android/build/` e `*.apk` ficam no `.gitignore`).
 
 ---
 
